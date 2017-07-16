@@ -27,7 +27,7 @@ class StackTrace {
 			LOG(INFO,"Create file error,file name = %s!!",file_path.c_str());
 			return false;
 		}
-		fd = fileno(fp);
+		fd = fileno(file_);
 		fseek(file_, 0, SEEK_END);
 		return true;
 	}
