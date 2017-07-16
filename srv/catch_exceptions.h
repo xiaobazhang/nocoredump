@@ -57,7 +57,7 @@ class ExceptFrame {
  public:
 	PageMap page_flag_;//记录上下文标记
 	jmp_buf env;
-	int32 flag_;//标志段,用于跳转代码区间
+	int flag_;//标志段,用于跳转代码区间
 	string try_name;
 	TraceFlag trace_flag_;
 };

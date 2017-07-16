@@ -19,7 +19,7 @@ class SpinLock :public NonCopy{
 	}
 
 	~SpinLock(){
-		pthread_spin_destory(&lock_);
+		pthread_spin_destroy(&lock_);
 	}
 
 	bool Lock(){

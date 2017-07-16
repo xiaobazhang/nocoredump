@@ -11,6 +11,8 @@
 #include "../base/lock.h"
 #include "../base/log.h"
 
+using namespace std;
+
 class StackTrace {
  public:
 	StackTrace():file_(NULL) {
