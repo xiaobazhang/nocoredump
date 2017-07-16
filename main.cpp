@@ -4,7 +4,8 @@
 using namespace std;
 
 int test_test() {
-	int a = 1 / 0;
+	int a = 10 / 0;
+	return 0;
 }
 
 bool ABCDEF() {
@@ -21,8 +22,6 @@ void CoreDump()
 		EndCatch
 	}
 }
-
-
 
 int main() {
 	CoreDump();
