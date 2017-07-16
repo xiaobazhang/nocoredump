@@ -20,6 +20,8 @@
 typedef std::map<string, int> PageMap;
 typedef std::map<string, bool> TraceFlag;
 
+static const string core_file = "/home/";
+
 void SignalHandle(int sig);
 class ExceptFrame {
  public:
@@ -77,7 +79,7 @@ void SignalHandle(int sig) {
 	string try_name = ExceptFrameMgr::GetInstance()->try_name;
 	TraceFlag::iterator iter = ExceptFrameMgr::GetInstance()->trace_flag_.find(try_name);
 	if (iter == ExceptFrameMgr::GetInstance()->trace_flag_.end()) {
-		stack_trace_.SetParam("/home/uonline/" + try_name + ".core");
+		stack_trace_.SetParam(core_file + try_name + ".core");
 		stack_trace_.GetStackTraceInfo();
 		ExceptFrameMgr::GetInstance()->trace_flag_[try_name] = true;
 	}
