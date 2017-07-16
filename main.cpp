@@ -4,8 +4,7 @@
 using namespace std;
 
 int test_test() {
-	int *s1 = 0;
-	(*s1) = 0;
+	int a = 1 / 0;
 }
 
 bool ABCDEF() {
