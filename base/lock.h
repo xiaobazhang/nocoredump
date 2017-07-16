@@ -12,9 +12,9 @@ class SpinLock :public NonCopy{
  public:
 	explicit SpinLock(bool share = false){
 		if(share){
-			pthread_spinlock_init(&lock_,PTHREAD_PROCESS_SHARED);
+			pthread_spin_init(&lock_,PTHREAD_PROCESS_SHARED);
 		} else{
-			pthread_spinlock_init(&lock_,PTHREAD_PROCESS_PRIVATE);
+			pthread_spin_init(&lock_,PTHREAD_PROCESS_PRIVATE);
 		}
 	}
 
