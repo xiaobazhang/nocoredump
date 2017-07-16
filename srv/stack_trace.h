@@ -23,7 +23,8 @@ class StackTrace {
 	bool SetParam(string file_path, int length = 200) {
 		name_ = file_path;
 		size_ = length;
-		if ((file_ = fopen(file_path.c_str(), "w")) == NULL) {
+		file_ = fopen(file_path.c_str(), "w");
+		if (file_ == NULL) {
 			LOG(INFO,"Create file error,file name = %s!!",file_path.c_str());
 			return false;
 		}
