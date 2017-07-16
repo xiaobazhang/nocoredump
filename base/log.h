@@ -12,7 +12,7 @@
 #define ERROR 2
 #define LOG(LEVEL, fmt, ...)\
     do {\
-        if (NOTICE == LEVEL)\
+        if (INFO == LEVEL)\
             fprintf(stdout, "NOTICE:[%s]:[%d]:"fmt, __FILE__, __LINE__ , ##__VA_ARGS__);\
         else if (WARNING == LEVEL)\
             fprintf(stdout, "WARNING:[%s]:[%d]:"fmt, __FILE__, __LINE__ , ##__VA_ARGS__);\
