@@ -75,7 +75,6 @@ void SignalHandle(int sig) {
 	string try_name = ExceptFrameMgr::GetInstance()->try_name;
 	TraceFlag::iterator iter = ExceptFrameMgr::GetInstance()->trace_flag_.find(try_name);
 	if (iter == ExceptFrameMgr::GetInstance()->trace_flag_.end()) {
-		ConfigRead::GetDefault()->Read("corefile", "path", file_name);
 		stack_trace_.SetParam("/home/uonline/" + try_name + ".core");
 		stack_trace_.GetStackTraceInfo();
 		ExceptFrameMgr::GetInstance()->trace_flag_[try_name] = true;
