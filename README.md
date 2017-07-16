@@ -26,7 +26,7 @@ SIGSEGV	 | 11  |  Core | 无效内存引用(试图访问不属于自己的内存
         cout << "catch the bug bug_name!!!" << endl;
     EndCatch        //EndCatch 一定要加上
 ```
-注意:当前还不支持Try块的嵌套,所以不能在一个Try块中包含另一个Try块!!!!!!
+注意:当前还不支持Try块的嵌套,所以不能在一个Try块中包含另一个Try块,后一个版本支持嵌套!!!!!!
 
 ## (4) nocoredump的线程安全问题
 经过测试,多线程下nocoredump是线程安全的,可以在多个线程中安全运行,并且打印的堆栈是当前出问题的堆栈,非常好用。
