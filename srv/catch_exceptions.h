@@ -20,7 +20,7 @@
 typedef std::map<string, int> PageMap;
 typedef std::map<string, bool> TraceFlag;
 
-static const string core_file = "/home/";
+static const string core_file = "/home/uonline/";
 
 void SignalHandle(int sig);
 class ExceptFrame {
