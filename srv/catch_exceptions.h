@@ -25,6 +25,8 @@ class ExceptFrame {
  public:
 	ExceptFrame() {
 		signal(SIGSEGV, SignalHandle);
+		signal(SIGFPE, SignalHandle);
+		signal(SIGILL, SignalHandle);
 		ClearFlag();
 	}
 	int GetPageFlag(string name)//获取标记
