@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
 
 project(nocoredump)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
