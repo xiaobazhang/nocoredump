@@ -40,4 +40,18 @@ class SpinLock :public NonCopy{
 	pthread_spinlock_t lock_;
 };
 
+class ScopLock : public NonCopy {
+ public:
+	ScopLock() {
+		lock_.Lock();
+	}
+	~ScopLock() {
+		lock_.UnLock();
+	}
+ private:
+	SpinLock lock_;
+};
+
+
+
 #endif //NOCOREDUMP_LOCK_H

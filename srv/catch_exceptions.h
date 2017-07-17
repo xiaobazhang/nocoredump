@@ -31,24 +31,16 @@ class ExceptFrame {
 		signal(SIGILL, SignalHandle);
 		ClearFlag();
 	}
-	int GetPageFlag(string name)//获取标记
-	{
-		PageMap::iterator iter = page_flag_.find(name);
-		if (iter == page_flag_.end()) {
-			int num = page_flag_.size();
-			page_flag_[name] = num + 1;
-			return num + 1;
-		}
-		return page_flag_[name];
-	}
 	int GetPageFlag() {
 		if (try_name == "") {
 			return -1;
 		}
-		PageMap::iterator iter = page_flag_.find(try_name);
+		PageMap::const_iterator iter = page_flag_.find(try_name);
+		ScopLock lock;  //范围锁
 		if (iter == page_flag_.end()) {
 			int num = page_flag_.size();
 			page_flag_[try_name] = num + 1;
+			lock1.UnLock();
 			return num + 1;
 		}
 		return page_flag_[try_name];
@@ -77,11 +69,14 @@ void SignalHandle(int sig) {
 	StackTrace stack_trace_;
 	string file_name;
 	string try_name = ExceptFrameMgr::GetInstance()->try_name;
-	TraceFlag::iterator iter = ExceptFrameMgr::GetInstance()->trace_flag_.find(try_name);
-	if (iter == ExceptFrameMgr::GetInstance()->trace_flag_.end()) {
-		stack_trace_.SetParam(core_file + try_name + ".core");
-		stack_trace_.GetStackTraceInfo();
-		ExceptFrameMgr::GetInstance()->trace_flag_[try_name] = true;
+	{
+		ScopLock lock;
+		TraceFlag::iterator iter = ExceptFrameMgr::GetInstance()->trace_flag_.find(try_name);
+		if (iter == ExceptFrameMgr::GetInstance()->trace_flag_.end()) {
+			stack_trace_.SetParam(core_file + try_name + ".core");
+			stack_trace_.GetStackTraceInfo();
+			ExceptFrameMgr::GetInstance()->trace_flag_[try_name] = true;
+		}
 	}
 	siglongjmp(ExceptFrameMgr::GetInstance()->env, ExceptFrameMgr::GetInstance()->GetPageFlag());
 }
