@@ -40,7 +40,6 @@ class ExceptFrame {
 		if (iter == page_flag_.end()) {
 			int num = page_flag_.size();
 			page_flag_[try_name] = num + 1;
-			lock1.UnLock();
 			return num + 1;
 		}
 		return page_flag_[try_name];
