@@ -5,7 +5,6 @@
 #ifndef NOCOREDUMP_CATCH_EXCEPTIONS_H
 #define NOCOREDUMP_CATCH_EXCEPTIONS_H
 #include <map>
-#include <setjmp.h>
 #include <signal.h>
 #include <unistd.h>
 #include <string.h>
@@ -13,12 +12,18 @@
 #include <execinfo.h>
 #include <pthread.h>
 #include <iostream>
+#include <ucontext.h>
+#include <stdio.h>
 #include "stack_trace.h"
 #include "../base/singletonholder.h"
 
+struct StackInfo {
+	ucontext_t ucontext;
+	bool crash;
+	bool trace;
+};
 
-typedef std::map<string, int> PageMap;
-typedef std::map<string, bool> TraceFlag;
+typedef std::map<string, StackInfo> StackMap; // 记录当前程序运行状态
 
 static const string core_file = "/home/uonline/";
 
@@ -31,30 +36,29 @@ class ExceptFrame {
 		signal(SIGILL, SignalHandle);
 		ClearFlag();
 	}
-	int GetPageFlag() {
-		if (try_name == "") {
-			return -1;
-		}
-		PageMap::const_iterator iter = page_flag_.find(try_name);
-		ScopLock lock;  //范围锁
-		if (iter == page_flag_.end()) {
-			int num = page_flag_.size();
-			page_flag_[try_name] = num + 1;
-			return num + 1;
-		}
-		return page_flag_[try_name];
+	bool GetCrashFlag() {
+		return stack_flag_[try_name].crash;
 	}
-	bool ClearFlag() {
-		bzero(env, sizeof(env));
+	ucontext_t &GetStackContext() {
+		return stack_flag_[try_name].ucontext;
+	}
+	bool SetStackName(string name) {
+		if (name == "") {
+			return false;
+		}
+		try_name = name;
+		StackInfo stack_info;
+		ucontext_t uc_t;
+		stack_info.crash = false;
+		stack_info.trace = false;
+		stack_info.ucontext = uc_t;
 		return true;
 	}
 
- public:
-	PageMap page_flag_;//记录上下文标记
-	jmp_buf env;
-	int flag_;//标志段,用于跳转代码区间
+ private:
+	StackMap stack_flag_;//记录上下文标记
 	string try_name;
-	TraceFlag trace_flag_;
+
 };
 class ExceptFrameMgr {
  public:
@@ -65,31 +69,19 @@ class ExceptFrameMgr {
 };
 
 void SignalHandle(int sig) {
-	StackTrace stack_trace_;
-	string file_name;
-	string try_name = ExceptFrameMgr::GetInstance()->try_name;
-	{
-		ScopLock lock;
-		TraceFlag::iterator iter = ExceptFrameMgr::GetInstance()->trace_flag_.find(try_name);
-		if (iter == ExceptFrameMgr::GetInstance()->trace_flag_.end()) {
-			stack_trace_.SetParam(core_file + try_name + ".core");
-			stack_trace_.GetStackTraceInfo();
-			ExceptFrameMgr::GetInstance()->trace_flag_[try_name] = true;
-		}
-	}
-	siglongjmp(ExceptFrameMgr::GetInstance()->env, ExceptFrameMgr::GetInstance()->GetPageFlag());
+	setcontext(&ExceptFrameMgr::GetInstance()->GetStackContext());
 }
 
 #define Try(name) \
         ExceptFrameMgr::GetInstance()->try_name = name;\
-        ExceptFrameMgr::GetInstance()->flag_ = sigsetjmp(ExceptFrameMgr::GetInstance()->env,ExceptFrameMgr::GetInstance()->GetPageFlag());\
-        if(ExceptFrameMgr::GetInstance()->flag_ == 0){ \
+        getcsontext(&ExceptFrameMgr::GetInstance()->GetStackContext());\
+        if(!ExceptFrameMgr::GetInstance()->GetCrashFlag()){ \
 
 #define EndTry \
     } \
 
 #define CatchExceptions \
-        if(ExceptFrameMgr::GetInstance()->GetPageFlag() == ExceptFrameMgr::GetInstance()->flag_){ \
+        if(ExceptFrameMgr::GetInstance()->GetCrashFlag()){ \
 
 #define EndCatch \
         }\
