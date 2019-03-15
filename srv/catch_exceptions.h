@@ -7,7 +7,7 @@
 #include <map>
 #include <stdio.h>
 #include <signal.h>
-#include <sys/ucontext.h>
+#include <ucontext.h>
 #include <ucontext.h>
 #include <unistd.h>
 #include <string.h>
